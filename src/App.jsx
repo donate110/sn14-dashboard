@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useEffectEvent, useState } from 'react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 import './App.css'
 
 const DEFAULT_API_BASE_URL = ''
