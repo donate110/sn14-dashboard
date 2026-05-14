@@ -1,5 +1,6 @@
 import { useDeferredValue, useEffect, useEffectEvent, useState } from 'react'
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { Analytics } from "@vercel/analytics/next"
 import './App.css'
 
 const DEFAULT_API_BASE_URL = ''
@@ -1438,6 +1439,8 @@ function App() {
         <Route path="*" element={<Navigate to="/overview" replace />} />
       </Routes>
       </div>
+
+      <Analytics />
 
       <footer className="app-footer">
         <div className="app-footer__inner">
