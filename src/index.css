@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@500;600;700;800&display=swap');
+
+:root {
+  --color-background: #f5f1ea;
+  --color-surface: #fffdf9;
+  --color-surface-elevated: rgba(255, 253, 249, 0.78);
+  --color-surface-soft: rgba(248, 244, 237, 0.92);
+  --color-text-strong: #1f2c34;
+  --color-text-main: #31424c;
+  --color-text-muted: #667784;
+  --color-accent: #4c829e;
+  --color-accent-strong: #2f6d8c;
+  --color-warm: #c76b3e;
+  --color-border: rgba(78, 92, 105, 0.14);
+  --color-border-strong: rgba(78, 92, 105, 0.28);
+  --color-highlight-soft: rgba(215, 230, 238, 0.78);
+  --color-success-bg: rgba(214, 237, 222, 0.95);
+  --color-success-fg: #1a5b39;
+  --color-danger-bg: rgba(253, 223, 214, 0.95);
+  --color-danger-fg: #8c3a2d;
+  --color-log-bg: linear-gradient(180deg, rgba(13, 26, 36, 0.96), rgba(20, 35, 44, 0.98));
+  --color-log-fg: #d8e6ef;
+  --shadow-soft: 0 24px 50px rgba(17, 24, 39, 0.07);
+  font-family: 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--color-text-main);
+  background:
+    radial-gradient(circle at top left, rgba(199, 107, 62, 0.12), transparent 22%),
+    radial-gradient(circle at 85% 10%, rgba(76, 130, 158, 0.1), transparent 28%),
+    linear-gradient(180deg, #f6f1e8 0%, #eef3f5 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme='dark'] {
+  --color-background: #0f1418;
+  --color-surface: #141c22;
+  --color-surface-elevated: rgba(20, 28, 34, 0.86);
+  --color-surface-soft: rgba(24, 34, 42, 0.94);
+  --color-text-strong: #edf5f8;
+  --color-text-main: #d4e0e6;
+  --color-text-muted: #8fa4af;
+  --color-accent: #6db0d3;
+  --color-accent-strong: #98cae5;
+  --color-border: rgba(137, 164, 177, 0.16);
+  --color-border-strong: rgba(137, 164, 177, 0.32);
+  --color-highlight-soft: rgba(36, 62, 77, 0.82);
+  --color-success-bg: rgba(32, 72, 51, 0.9);
+  --color-success-fg: #aee0c2;
+  --color-danger-bg: rgba(97, 41, 35, 0.92);
+  --color-danger-fg: #ffcbc1;
+  --color-log-bg: linear-gradient(180deg, rgba(7, 12, 16, 0.98), rgba(14, 22, 28, 0.98));
+  --color-log-fg: #d7e3ea;
+  --shadow-soft: 0 24px 50px rgba(0, 0, 0, 0.28);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--color-text-main);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--color-warm) 16%, transparent), transparent 22%),
+    radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 28%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-background) 88%, #fff), color-mix(in srgb, var(--color-background) 96%, #000));
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
+  color: var(--color-text-strong);
+}
+
+h1 {
+  font-size: clamp(2.7rem, 5vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+h2 {
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  letter-spacing: -0.03em;
+}
+
+h3 {
+  font-size: 1.12rem;
+}
+
+p {
+  margin: 0;
+}
+
+code,
+pre {
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+@media (max-width: 780px) {
+  #root {
+    width: min(100%, calc(100% - 1rem));
+    padding-top: 0.75rem;
+  }
+}
