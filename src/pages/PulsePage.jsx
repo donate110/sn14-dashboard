@@ -48,15 +48,20 @@ export function PulsePage({ evalProgressResource, pendingEvalJob, evalJobResourc
               )}
             </dl>
 
-            <div style={{ marginTop: '1.5rem' }}>
-              <h4 style={{ marginBottom: '1rem' }}>Timeline</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {progress.steps?.map((step, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--surface-color-higher)', borderRadius: 'var(--radius-md)' }}>
-                    <span style={{ fontWeight: 500 }}>{step.phase} {step.step ? `(${step.step})` : ''}</span>
-                    <span style={{ color: 'var(--text-color-muted)' }}>{formatDateTime(step.ts)}</span>
-                  </div>
-                ))}
+            <div className="timeline-container">
+              <h4 className="section-header__eyebrow" style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Timeline Progress</h4>
+              <div className="timeline">
+                {progress.steps?.map((step, i) => {
+                  const isLast = i === progress.steps.length - 1;
+                  return (
+                    <div key={i} className={`timeline-item ${isLast ? 'timeline-item--active' : ''}`}>
+                      <div className="timeline-item-title">
+                        {step.phase} {step.step ? <span style={{color: 'var(--color-text-muted)', fontWeight: 500}}>({step.step})</span> : ''}
+                      </div>
+                      <time className="timeline-item-ts">{formatDateTime(step.ts)}</time>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </article>

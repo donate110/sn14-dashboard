@@ -138,3 +138,75 @@ pre {
     padding-top: 0.75rem;
   }
 }
+
+/* Timeline Component */
+.timeline-container {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  left: 0.35rem; /* Center exactly under the pseudo-elements */
+  width: 2px;
+  background-color: var(--color-border);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.5rem; /* Distance from left padding */
+  top: 0.35rem; /* Align with text */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-border-strong);
+  border: 2px solid var(--color-surface);
+  z-index: 1;
+  transform: translateX(1px); /* Slight bump for perfect centering */
+}
+
+.timeline-item--active::before {
+  background-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-highlight-soft);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 var(--color-highlight-soft); }
+  70% { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.timeline-item-title {
+  font-weight: 600;
+  color: var(--color-text-strong);
+  font-size: 0.95rem;
+}
+
+.timeline-item-ts {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  margin-top: 0.25rem;
+}
