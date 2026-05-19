@@ -148,8 +148,8 @@ pre {
 
 .timeline {
   position: relative;
-  padding-left: 1.5rem;
-  margin-top: 1rem;
+  padding-left: 6.5rem;
+  margin-top: 1.5rem;
 }
 
 .timeline::before {
@@ -157,7 +157,7 @@ pre {
   position: absolute;
   top: 0.5rem;
   bottom: 0.5rem;
-  left: 0.35rem; /* Center exactly under the pseudo-elements */
+  left: 5.55rem;
   width: 2px;
   background-color: var(--color-border);
 }
@@ -165,6 +165,7 @@ pre {
 .timeline-item {
   position: relative;
   padding-bottom: 1.5rem;
+  min-height: 2.5rem;
 }
 
 .timeline-item:last-child {
@@ -174,15 +175,14 @@ pre {
 .timeline-item::before {
   content: '';
   position: absolute;
-  left: -1.5rem; /* Distance from left padding */
-  top: 0.35rem; /* Align with text */
+  left: -1.33rem;
+  top: 0.25rem;
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background-color: var(--color-border-strong);
   border: 2px solid var(--color-surface);
   z-index: 1;
-  transform: translateX(1px); /* Slight bump for perfect centering */
 }
 
 .timeline-item--active::before {
@@ -201,12 +201,32 @@ pre {
   font-weight: 600;
   color: var(--color-text-strong);
   font-size: 0.95rem;
+  padding-top: 0;
 }
 
 .timeline-item-ts {
-  display: block;
+  position: absolute;
+  left: -6.5rem;
+  top: 0.15rem;
+  width: 4.5rem;
+  text-align: right;
   font-size: 0.75rem;
   color: var(--color-text-muted);
   font-family: 'IBM Plex Mono', monospace;
-  margin-top: 0.25rem;
+  white-space: nowrap;
+}
+
+/* Challenger Row Highlight */
+.row--highlight {
+  background-color: var(--color-highlight-soft) !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+[data-theme='dark'] .row--highlight {
+  background-color: rgba(76, 130, 158, 0.2) !important;
+  box-shadow: inset 2px 0 0 0 var(--color-accent);
+}
+
+.table tbody tr.row--highlight:hover {
+  background-color: rgba(76, 130, 158, 0.25) !important;
 }
