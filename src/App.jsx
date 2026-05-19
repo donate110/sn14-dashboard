@@ -230,6 +230,10 @@ async function loadEvaluations() {
     void loadLogText(selectedLogLabel)
   })
 
+  const syncValidatorLogTextEffect = useEffectEvent(() => {
+    void loadValidatorLogText(selectedValidatorLogLabel)
+  })
+
   useEffect(() => {
     refreshAllEffect()
 
@@ -254,8 +258,9 @@ async function loadEvaluations() {
   }, [evaluationsResource.data, selectedEvaluationUid])
 
   useEffect(() => {
-    const nextLabel = logsResource.data?.logs?.[0]?.label
-    const hasCurrentLabel = logsResource.data?.logs?.some(
+    const minerLogs = logsResource.data?.logs?.filter(e => !e.label.startsWith('cpu_validator_') && !e.label.startsWith('gpu_eval_')) || []
+    const nextLabel = minerLogs[0]?.label
+    const hasCurrentLabel = minerLogs.some(
       (entry) => entry.label === selectedLogLabel,
     )
 
@@ -265,12 +270,28 @@ async function loadEvaluations() {
   }, [logsResource.data, selectedLogLabel])
 
   useEffect(() => {
+    const valLogs = logsResource.data?.logs?.filter(e => e.label.startsWith('cpu_validator_') || e.label.startsWith('gpu_eval_')) || []
+    const nextLabel = valLogs[0]?.label
+    const hasCurrentLabel = valLogs.some(
+      (entry) => entry.label === selectedValidatorLogLabel,
+    )
+
+    if (!selectedValidatorLogLabel || !hasCurrentLabel) {
+      setSelectedValidatorLogLabel(nextLabel ?? '')
+    }
+  }, [logsResource.data, selectedValidatorLogLabel])
+
+  useEffect(() => {
     syncEvaluationHistoryEffect()
   }, [apiBaseUrl, selectedEvaluationUid])
 
   useEffect(() => {
     syncLogTextEffect()
   }, [apiBaseUrl, selectedLogLabel])
+
+  useEffect(() => {
+    syncValidatorLogTextEffect()
+  }, [apiBaseUrl, selectedValidatorLogLabel])
 
   const status = statusResource.data
   const leader = leaderResource.data?.leader
