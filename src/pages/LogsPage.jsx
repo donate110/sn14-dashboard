@@ -25,12 +25,26 @@ export function LogsPage({
   const sortedLogs = useMemo(() => {
     const logs = [...filteredLogs];
     logs.sort((a, b) => {
+      if (isValidatorView) {
+          const getBlockOrTime = (label) => {
+            const vMatch = label.match(/_(\d{4}-?\d{2}-?\d{2})[T_]?(\d{2}-?:?\d{2}-?:?\d{2})/);
+            if (vMatch) return parseInt(vMatch[1].replace(/\D/g, '') + vMatch[2].replace(/\D/g, ''), 10);
+            return 0;
+          };
+          
+          let valB = getBlockOrTime(b.label);
+          let valA = getBlockOrTime(a.label);
+          
+          if (valB !== valA && (valB !== 0 && valA !== 0)) {
+            return valB - valA;
+          }
+          return b.label.localeCompare(a.label); // string fallback descending
+      }
+
       if (sortOrder === 'newest') {
         const getBlockOrTime = (label) => {
           const cMatch = label.match(/_(\d+)(?:\.log)?$/);
           if (cMatch) return parseInt(cMatch[1], 10);
-          const vMatch = label.match(/_(\d{8})_(\d{6})/);
-          if (vMatch) return parseInt(vMatch[1] + vMatch[2], 10);
           return 0;
         };
         return getBlockOrTime(b.label) - getBlockOrTime(a.label);
