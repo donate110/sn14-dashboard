@@ -5,6 +5,7 @@ import { formatDateTime, formatInteger } from '../lib/utils.js';
 export function LogsPage({
   title = 'Logs',
   eyebrow = 'Logs',
+  isValidatorView = false,
   apiBaseUrl,
   logQuery,
   setLogQuery,
@@ -52,7 +53,8 @@ export function LogsPage({
         title={title}
       />
       <div className="toolbar-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', width: '100%', justifyContent: 'flex-end' }}>
-            <div className="segmented-control" style={{ flexShrink: 0 }}>
+            {!isValidatorView && (
+              <div className="segmented-control" style={{ flexShrink: 0 }}>
               {[
                 ['newest', 'Newest to Oldest'],
                 ['uid', 'Sort by UID'],
@@ -67,6 +69,7 @@ export function LogsPage({
                 </button>
               ))}
             </div>
+            )}
 
             <label className="field field--wide">
               <input
@@ -114,7 +117,9 @@ export function LogsPage({
                     setSelectedLogLabel(entry.label)
                   }}
                 >
-                  <span className="log-list__title">{entry.label}</span>
+                  <span className="log-list__title" style={{
+                    color: isValidatorView ? (entry.label.startsWith('cpu_') ? 'var(--color-warm)' : entry.label.startsWith('gpu_') ? 'var(--color-accent-strong)' : undefined) : undefined
+                  }}>{entry.label}</span>
                   <span className="log-list__meta">
                     {entry.filename} · {formatInteger(entry.size_bytes)} bytes
                   </span>

@@ -455,6 +455,7 @@ async function loadEvaluations() {
             <LogsPage
               title="Validator Logs"
               eyebrow="Validator Logs"
+              isValidatorView={true}
               apiBaseUrl={apiBaseUrl}
               logQuery={validatorLogQuery}
               setLogQuery={setValidatorLogQuery}
