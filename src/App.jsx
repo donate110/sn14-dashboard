@@ -355,7 +355,8 @@ export default function App() {
       </header>
 
       <div className="main-content">
-        <Route
+        <Routes>
+<Route
           path="/pulse"
           element={
             <PulsePage
@@ -365,7 +366,7 @@ export default function App() {
             />
           }
         />
-        <Routes>
+        
           <Route path="/" element={<Navigate to="/overview" replace />} />
         <Route
           path="/overview"
@@ -467,4 +468,3 @@ export default function App() {
     </main>
   )
 }
-
