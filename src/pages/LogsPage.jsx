@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { SectionHeader, TableEmptyState } from '../components/index.jsx';
 import { formatDateTime, formatInteger } from '../lib/utils.js';
 
@@ -16,13 +17,55 @@ export function LogsPage({
   onCopy,
   getApiLink,
 }) {
+  const [sortOrder, setSortOrder] = useState('newest');
+
+  const sortedLogs = useMemo(() => {
+    const logs = [...filteredLogs];
+    logs.sort((a, b) => {
+      if (sortOrder === 'newest') {
+        const getBlockOrTime = (label) => {
+          const cMatch = label.match(/_(\d+)(?:\.log)?$/);
+          if (cMatch) return parseInt(cMatch[1], 10);
+          const vMatch = label.match(/_(\d{8})_(\d{6})/);
+          if (vMatch) return parseInt(vMatch[1] + vMatch[2], 10);
+          return 0;
+        };
+        return getBlockOrTime(b.label) - getBlockOrTime(a.label);
+      } else if (sortOrder === 'uid') {
+        const getUid = (label) => {
+          const match = label.match(/uid(\d+)/);
+          return match ? parseInt(match[1], 10) : -1;
+        };
+        return getUid(a.label) - getUid(b.label);
+      }
+      return 0;
+    });
+    return logs;
+  }, [filteredLogs, sortOrder]);
+
   return (
     <section className="section-card">
       <SectionHeader
         eyebrow="Logs"
         title="Logs"
         actions={
-          <div className="toolbar-group toolbar-group--tight">
+          <div className="toolbar-group">
+            <div className="segmented-control" style={{ marginRight: '1rem', flexShrink: 0 }}>
+              {[
+                ['newest', 'Newest to Oldest'],
+                ['uid', 'Sort by UID'],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`segmented-control__button${sortOrder === value ? ' is-active' : ''}`}
+                  onClick={() => setSortOrder(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             <label className="field field--wide">
               <span className="field__label">Search logs</span>
               <input
@@ -54,16 +97,16 @@ export function LogsPage({
         <article className="panel-card panel-card--flush">
           <div className="panel-card__header panel-card__header--padded">
             <h3>Available logs</h3>
-            <span className="panel-card__meta">{formatInteger(filteredLogs.length)} labels</span>
+            <span className="panel-card__meta">{formatInteger(sortedLogs.length)} labels</span>
           </div>
 
           {logsResource.loading && logEntries.length === 0 ? (
             <TableEmptyState message="Loading container logs…" />
-          ) : filteredLogs.length === 0 ? (
+          ) : sortedLogs.length === 0 ? (
             <TableEmptyState message={logsResource.error || 'No logs match the current search.'} />
           ) : (
             <div className="log-list">
-              {filteredLogs.map((entry) => (
+              {sortedLogs.map((entry) => (
                 <button
                   key={entry.label}
                   type="button"
