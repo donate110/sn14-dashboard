@@ -48,9 +48,9 @@ export function LogsPage({
       <SectionHeader
         eyebrow="Logs"
         title="Logs"
-        actions={
-          <div className="toolbar-group">
-            <div className="segmented-control" style={{ marginRight: '1rem', flexShrink: 0 }}>
+      />
+      <div className="toolbar-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
+            <div className="segmented-control" style={{ flexShrink: 0 }}>
               {[
                 ['newest', 'Newest to Oldest'],
                 ['uid', 'Sort by UID'],
@@ -89,9 +89,7 @@ export function LogsPage({
             >
               {logTextResource.refreshing ? 'Refreshing…' : 'Refresh log'}
             </button>
-          </div>
-        }
-      />
+      </div>
 
       <div className="two-column-layout two-column-layout--logs">
         <article className="panel-card panel-card--flush">
