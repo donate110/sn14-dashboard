@@ -5,7 +5,7 @@ import { AUTO_REFRESH_MS, NAV_ITEMS, FOOTER_LINKS, THEME_STORAGE_KEY } from './l
 import { normalizeBaseUrl, createResourceState, getInitialTheme, fetchResource, formatDateTime } from './lib/utils.js'
 import { ThemeToggleIcon, FooterLinkCard } from './components/index.jsx'
 import { OverviewPage } from './pages/OverviewPage.jsx'
-import { KingPage } from './pages/KingPage.jsx'
+import { LeaderPage } from './pages/LeaderPage.jsx'
 import { EvaluationsPage } from './pages/EvaluationsPage.jsx'
 import { LogsPage } from './pages/LogsPage.jsx'
 import { RoundsPage } from './pages/RoundsPage.jsx'
@@ -17,8 +17,8 @@ export default function App() {
   const [theme, setTheme] = useState(getInitialTheme)
   const [healthResource, setHealthResource] = useState(createResourceState)
   const [statusResource, setStatusResource] = useState(createResourceState)
-  const [kingResource, setKingResource] = useState(createResourceState)
-  const [kingHistoryResource, setKingHistoryResource] = useState(createResourceState)
+  const [leaderResource, setLeaderResource] = useState(createResourceState)
+  const [leaderHistoryResource, setLeaderHistoryResource] = useState(createResourceState)
   const [evaluationsResource, setEvaluationsResource] = useState(createResourceState)
   const [evaluationHistoryResource, setEvaluationHistoryResource] = useState(createResourceState)
   const [logsResource, setLogsResource] = useState(createResourceState)
@@ -108,11 +108,62 @@ export default function App() {
       return
     }
 
+    const isValidatorLog = label.startsWith('cpu_validator_') || label.startsWith('gpu_eval_');
+    const endpoint = isValidatorLog ? '/api/validator-log/' : '/api/container-log/';
+
     await updateResource(
       setLogTextResource,
-      `/api/container-log/${encodeURIComponent(label)}`,
+      `${endpoint}${encodeURIComponent(label)}`,
       'text',
     )
+  }
+
+  async function loadAllLogs() {
+    setLogsResource((current) => ({
+      ...current,
+      error: '',
+      loading: current.data === null,
+      refreshing: current.data !== null,
+    }))
+
+    try {
+      // Fetch both endpoints, but don't fail completely if one fails unless both fail
+      const [containerRes, validatorRes] = await Promise.allSettled([
+        fetchResource(apiBaseUrl, '/api/container-logs'),
+        fetchResource(apiBaseUrl, '/api/validator-logs')
+      ]);
+
+      let logs = [];
+      let encounteredError = null;
+
+      if (containerRes.status === 'fulfilled' && containerRes.value?.logs) {
+         logs.push(...containerRes.value.logs);
+      } else if (containerRes.status === 'rejected') {
+         encounteredError = containerRes.reason;
+      }
+
+      if (validatorRes.status === 'fulfilled' && validatorRes.value?.logs) {
+         logs.push(...validatorRes.value.logs);
+      } else if (validatorRes.status === 'rejected') {
+         encounteredError = validatorRes.reason;
+      }
+
+      // Sort logs (latest first assuming filename has timestamp, or just rely on API)
+      // Usually keeping validator logs first or combined is fine.
+
+      if (logs.length === 0 && encounteredError) {
+         throw encounteredError;
+      }
+
+      setLogsResource({ data: { logs }, error: '', loading: false, refreshing: false })
+    } catch (error) {
+      setLogsResource((current) => ({
+        ...current,
+        error: error instanceof Error ? error.message : 'Unable to load logs',
+        loading: false,
+        refreshing: false,
+      }))
+    }
   }
 
   async function loadEvaluations() {
@@ -131,10 +182,10 @@ export default function App() {
       await Promise.all([
         updateResource(setHealthResource, '/api/health'),
         updateResource(setStatusResource, '/api/status'),
-        updateResource(setKingResource, '/api/king'),
-        updateResource(setKingHistoryResource, '/api/king/history'),
+        updateResource(setLeaderResource, '/api/leader'),
+        updateResource(setLeaderHistoryResource, '/api/leader/history'),
         loadEvaluations(),
-        updateResource(setLogsResource, '/api/container-logs'),
+        loadAllLogs(),
         updateResource(setRoundsResource, '/api/rounds'),
         updateResource(setEvalJobResource, '/api/eval-job'),
       ])
@@ -199,8 +250,8 @@ export default function App() {
   }, [apiBaseUrl, selectedLogLabel])
 
   const status = statusResource.data
-  const king = kingResource.data?.king
-  const kingHistory = kingHistoryResource.data?.history ?? []
+  const leader = leaderResource.data?.leader
+  const leaderHistory = leaderHistoryResource.data?.history ?? []
   const evaluations = evaluationsResource.data?.evaluations ?? []
   const evaluationHistory = evaluationHistoryResource.data?.evaluations ?? []
   const latestSelectedEvaluation = evaluationHistory[0]
@@ -300,12 +351,12 @@ export default function App() {
           element={<OverviewPage healthResource={healthResource} status={status} />}
         />
         <Route
-          path="/king"
+          path="/leader"
           element={
-            <KingPage
-              king={king}
-              kingHistory={kingHistory}
-              kingHistoryResource={kingHistoryResource}
+            <LeaderPage
+              leader={leader}
+              leaderHistory={leaderHistory}
+              leaderHistoryResource={leaderHistoryResource}
               copiedKey={copiedKey}
               onCopy={copyToClipboard}
             />

@@ -25,8 +25,8 @@ export function OverviewPage({ healthResource, status }) {
           tone="danger"
         />
         <MetricCard
-          label="Current king"
-          value={status?.king_uid !== undefined ? `UID ${status.king_uid}` : 'Pending'}
+          label="Current leader"
+          value={status?.leader_uid !== undefined ? `UID ${status.leader_uid}` : 'Pending'}
           tone="accent"
         />
         <MetricCard
@@ -40,9 +40,9 @@ export function OverviewPage({ healthResource, status }) {
 
         <div className="status-grid">
           <div className="info-card">
-            <span className="info-card__label">King image</span>
+            <span className="info-card__label">Leader image</span>
             <strong className="info-card__value">
-              <DockerImageLink image={status?.king_image} />
+              <DockerImageLink image={status?.leader_image} />
             </strong>
           </div>
           <div className="info-card">

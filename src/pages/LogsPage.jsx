@@ -97,7 +97,7 @@ export function LogsPage({
                 className="button button--ghost"
                 onClick={() => {
                   onCopy(
-                    getApiLink(`/api/container-log/${encodeURIComponent(selectedLogLabel)}`),
+                    getApiLink((selectedLogLabel.startsWith('cpu_validator_') || selectedLogLabel.startsWith('gpu_eval_') ? '/api/validator-log/' : '/api/container-log/') + encodeURIComponent(selectedLogLabel)),
                     `raw-log-link-${selectedLogLabel}`,
                   )
                 }}

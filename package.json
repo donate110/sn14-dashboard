@@ -17,6 +17,10 @@
     "react-router-dom": "^7.15.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/generator": "^7.29.1",
+    "@babel/parser": "^7.29.3",
+    "@babel/traverse": "^7.29.0",
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -25,6 +29,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "prettier": "^3.8.3",
     "vite": "^8.0.12"
   }
 }
