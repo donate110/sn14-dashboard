@@ -4,6 +4,7 @@ export const THEME_STORAGE_KEY = 'sn14-dashboard-theme'
 
 export const NAV_ITEMS = [
   { to: '/overview', label: 'Overview' },
+  { to: '/pulse', label: 'Pulse' },
   { to: '/leader', label: 'Leader' },
   { to: '/evaluations', label: 'Evaluations' },
   { to: '/logs', label: 'Logs' },

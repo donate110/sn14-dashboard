@@ -8,7 +8,8 @@ import { OverviewPage } from './pages/OverviewPage.jsx'
 import { LeaderPage } from './pages/LeaderPage.jsx'
 import { EvaluationsPage } from './pages/EvaluationsPage.jsx'
 import { LogsPage } from './pages/LogsPage.jsx'
-import { RoundsPage } from './pages/RoundsPage.jsx'
+import { RoundsPage } from './pages/RoundsPage.jsx';
+import { PulsePage } from './pages/PulsePage.jsx'
 import './App.css'
 
 
@@ -25,6 +26,7 @@ export default function App() {
   const [logTextResource, setLogTextResource] = useState(createResourceState)
   const [roundsResource, setRoundsResource] = useState(createResourceState)
   const [evalJobResource, setEvalJobResource] = useState(createResourceState)
+  const [evalProgressResource, setEvalProgressResource] = useState(createResourceState)
   const [evaluationFilter, setEvaluationFilter] = useState('all')
   const [evaluationQuery, setEvaluationQuery] = useState('')
   const [logQuery, setLogQuery] = useState('')
@@ -188,6 +190,7 @@ export default function App() {
         loadAllLogs(),
         updateResource(setRoundsResource, '/api/rounds'),
         updateResource(setEvalJobResource, '/api/eval-job'),
+        updateResource(setEvalProgressResource, '/api/eval-progress'),
       ])
       setLastUpdatedAt(Date.now())
     } finally {
@@ -198,6 +201,14 @@ export default function App() {
   const refreshAllEffect = useEffectEvent(() => {
     void refreshAll()
   })
+
+  useEffect(() => {
+    // pulse-poll-effect
+    const interval = setInterval(() => {
+      updateResource(setEvalProgressResource, '/api/eval-progress');
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [apiBaseUrl]);
 
   const syncEvaluationHistoryEffect = useEffectEvent(() => {
     void loadEvaluationHistory(selectedEvaluationUid)
@@ -344,6 +355,16 @@ export default function App() {
       </header>
 
       <div className="main-content">
+        <Route
+          path="/pulse"
+          element={
+            <PulsePage
+              evalProgressResource={evalProgressResource}
+              pendingEvalJob={pendingEvalJob}
+              evalJobResource={evalJobResource}
+            />
+          }
+        />
         <Routes>
           <Route path="/" element={<Navigate to="/overview" replace />} />
         <Route
