@@ -3,6 +3,8 @@ import { SectionHeader, TableEmptyState } from '../components/index.jsx';
 import { formatDateTime, formatInteger } from '../lib/utils.js';
 
 export function LogsPage({
+  title = 'Logs',
+  eyebrow = 'Logs',
   apiBaseUrl,
   logQuery,
   setLogQuery,
@@ -46,10 +48,10 @@ export function LogsPage({
   return (
     <section className="section-card">
       <SectionHeader
-        eyebrow="Logs"
-        title="Logs"
+        eyebrow={eyebrow}
+        title={title}
       />
-      <div className="toolbar-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
+      <div className="toolbar-group" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem', width: '100%', justifyContent: 'flex-end' }}>
             <div className="segmented-control" style={{ flexShrink: 0 }}>
               {[
                 ['newest', 'Newest to Oldest'],
@@ -67,7 +69,6 @@ export function LogsPage({
             </div>
 
             <label className="field field--wide">
-              <span className="field__label">Search logs</span>
               <input
                 className="field__input"
                 type="search"
@@ -75,7 +76,7 @@ export function LogsPage({
                 onChange={(event) => {
                   setLogQuery(event.target.value)
                 }}
-                placeholder="Label or filename"
+                placeholder="Search logs"
               />
             </label>
 

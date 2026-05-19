@@ -10,9 +10,7 @@ export function CopyValueButton({
   const isCopied = copiedKey === label;
   return <button type="button" className={`copy-value-button${isCopied ? ' is-copied' : ''}${className ? ` ${className}` : ''}`} onClick={() => {
     onCopy(value, label);
-  }} title={`Copy ${label}`} style={{
-    animationDelay: `${Math.random() * 0.5}s`
-  }}>
+  }} title={`Copy ${label}`}>
       <span>{truncateMiddle(value, 14, 10)}</span>
       <span className="copy-value-button__icon-wrapper">
         {isCopied ? <svg viewBox="0 0 24 24" aria-hidden="true" className="copy-value-button__icon text-success">

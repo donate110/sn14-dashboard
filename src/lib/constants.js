@@ -7,7 +7,8 @@ export const NAV_ITEMS = [
   { to: '/pulse', label: 'Pulse' },
   { to: '/leader', label: 'Leader' },
   { to: '/evaluations', label: 'Evaluations' },
-  { to: '/logs', label: 'Logs' },
+  { to: '/logs', label: 'Miner Logs' },
+  { to: '/validator-logs', label: 'Validator Logs' },
   { to: '/rounds', label: 'Rounds' },
 ]
 

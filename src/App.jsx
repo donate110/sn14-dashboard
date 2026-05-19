@@ -24,20 +24,24 @@ export default function App() {
   const [evaluationHistoryResource, setEvaluationHistoryResource] = useState(createResourceState)
   const [logsResource, setLogsResource] = useState(createResourceState)
   const [logTextResource, setLogTextResource] = useState(createResourceState)
+  const [validatorLogTextResource, setValidatorLogTextResource] = useState(createResourceState)
   const [roundsResource, setRoundsResource] = useState(createResourceState)
   const [evalJobResource, setEvalJobResource] = useState(createResourceState)
   const [evalProgressResource, setEvalProgressResource] = useState(createResourceState)
   const [evaluationFilter, setEvaluationFilter] = useState('all')
   const [evaluationQuery, setEvaluationQuery] = useState('')
   const [logQuery, setLogQuery] = useState('')
+  const [validatorLogQuery, setValidatorLogQuery] = useState('')
   const [selectedEvaluationUid, setSelectedEvaluationUid] = useState(null)
   const [selectedLogLabel, setSelectedLogLabel] = useState('')
+  const [selectedValidatorLogLabel, setSelectedValidatorLogLabel] = useState('')
   const [lastUpdatedAt, setLastUpdatedAt] = useState(null)
   const [isRefreshingAll, setIsRefreshingAll] = useState(false)
   const [copiedKey, setCopiedKey] = useState('')
 
   const deferredEvaluationQuery = useDeferredValue(evaluationQuery)
   const deferredLogQuery = useDeferredValue(logQuery)
+  const deferredValidatorLogQuery = useDeferredValue(validatorLogQuery)
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -120,55 +124,23 @@ export default function App() {
     )
   }
 
-  async function loadAllLogs() {
-    setLogsResource((current) => ({
-      ...current,
-      error: '',
-      loading: current.data === null,
-      refreshing: current.data !== null,
-    }))
-
-    try {
-      // Fetch both endpoints, but don't fail completely if one fails unless both fail
-      const [containerRes, validatorRes] = await Promise.allSettled([
-        fetchResource(apiBaseUrl, '/api/container-logs'),
-        fetchResource(apiBaseUrl, '/api/validator-logs')
-      ]);
-
-      let logs = [];
-      let encounteredError = null;
-
-      if (containerRes.status === 'fulfilled' && containerRes.value?.logs) {
-         logs.push(...containerRes.value.logs);
-      } else if (containerRes.status === 'rejected') {
-         encounteredError = containerRes.reason;
-      }
-
-      if (validatorRes.status === 'fulfilled' && validatorRes.value?.logs) {
-         logs.push(...validatorRes.value.logs);
-      } else if (validatorRes.status === 'rejected') {
-         encounteredError = validatorRes.reason;
-      }
-
-      // Sort logs (latest first assuming filename has timestamp, or just rely on API)
-      // Usually keeping validator logs first or combined is fine.
-
-      if (logs.length === 0 && encounteredError) {
-         throw encounteredError;
-      }
-
-      setLogsResource({ data: { logs }, error: '', loading: false, refreshing: false })
-    } catch (error) {
-      setLogsResource((current) => ({
-        ...current,
-        error: error instanceof Error ? error.message : 'Unable to load logs',
-        loading: false,
-        refreshing: false,
-      }))
+  async function loadValidatorLogText(label) {
+    if (!label) {
+      setValidatorLogTextResource(createResourceState())
+      return
     }
+
+    const isValidatorLog = label.startsWith('cpu_validator_') || label.startsWith('gpu_eval_');
+    const endpoint = isValidatorLog ? '/api/validator-log/' : '/api/container-log/';
+
+    await updateResource(
+      setValidatorLogTextResource,
+      `${endpoint}${encodeURIComponent(label)}`,
+      'text',
+    )
   }
 
-  async function loadEvaluations() {
+async function loadEvaluations() {
     const path =
       evaluationFilter === 'all'
         ? '/api/evaluations'
@@ -290,13 +262,21 @@ export default function App() {
   })
 
   const normalizedLogQuery = deferredLogQuery.trim().toLowerCase()
-  const filteredLogs = logEntries.filter((entry) => {
-    if (!normalizedLogQuery) {
-      return true
-    }
+  const normalizedValidatorLogQuery = deferredValidatorLogQuery.trim().toLowerCase()
 
+  const minerLogEntries = logEntries.filter(e => !e.label.startsWith('cpu_validator_') && !e.label.startsWith('gpu_eval_'));
+  const validatorLogEntries = logEntries.filter(e => e.label.startsWith('cpu_validator_') || e.label.startsWith('gpu_eval_'));
+
+  const filteredLogs = minerLogEntries.filter((entry) => {
+    if (!normalizedLogQuery) return true
     const haystack = `${entry.label} ${entry.filename}`.toLowerCase()
     return haystack.includes(normalizedLogQuery)
+  })
+
+  const filteredValidatorLogs = validatorLogEntries.filter((entry) => {
+    if (!normalizedValidatorLogQuery) return true
+    const haystack = `${entry.label} ${entry.filename}`.toLowerCase()
+    return haystack.includes(normalizedValidatorLogQuery)
   })
 
   const disqualifiedCount = evaluationHistory.filter((entry) => entry.disqualified).length
@@ -411,6 +391,8 @@ export default function App() {
           path="/logs"
           element={
             <LogsPage
+              title="Miner Logs"
+              eyebrow="Miner Logs"
               apiBaseUrl={apiBaseUrl}
               logQuery={logQuery}
               setLogQuery={setLogQuery}
@@ -421,6 +403,28 @@ export default function App() {
               logsResource={logsResource}
               logTextResource={logTextResource}
               loadLogText={loadLogText}
+              copiedKey={copiedKey}
+              onCopy={copyToClipboard}
+              getApiLink={getApiLink}
+            />
+          }
+        />
+        <Route
+          path="/validator-logs"
+          element={
+            <LogsPage
+              title="Validator Logs"
+              eyebrow="Validator Logs"
+              apiBaseUrl={apiBaseUrl}
+              logQuery={validatorLogQuery}
+              setLogQuery={setValidatorLogQuery}
+              selectedLogLabel={selectedValidatorLogLabel}
+              setSelectedLogLabel={setSelectedValidatorLogLabel}
+              filteredLogs={filteredValidatorLogs}
+              logEntries={logEntries}
+              logsResource={logsResource}
+              logTextResource={validatorLogTextResource}
+              loadLogText={loadValidatorLogText}
               copiedKey={copiedKey}
               onCopy={copyToClipboard}
               getApiLink={getApiLink}
