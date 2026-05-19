@@ -45,8 +45,7 @@ export function EvaluationsPage({
               ))}
             </div>
 
-            <label className="field">
-              <span className="field__label">Search</span>
+            <label className="field field--horizontal">
               <input
                 className="field__input"
                 type="search"
@@ -54,7 +53,7 @@ export function EvaluationsPage({
                 onChange={(event) => {
                   setEvaluationQuery(event.target.value)
                 }}
-                placeholder="UID, image, hotkey, digest"
+                placeholder="search by uid, hotkey, image"
               />
             </label>
           </div>

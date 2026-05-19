@@ -465,7 +465,10 @@ th {
 }
 
 .toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
   align-items: end;
+  gap: 1rem;
 }
 
 .toolbar-group--tight {
