@@ -140,7 +140,47 @@ export default function App() {
     )
   }
 
+
+  async function loadAllLogs() {
+    setLogsResource((current) => ({
+      ...current,
+      error: '',
+      loading: current.data === null,
+      refreshing: current.data !== null,
+    }))
+    try {
+      const [containerRes, validatorRes] = await Promise.allSettled([
+        fetchResource(apiBaseUrl, '/api/container-logs'),
+        fetchResource(apiBaseUrl, '/api/validator-logs')
+      ]);
+      let logs = [];
+      let encounteredError = null;
+      if (containerRes.status === 'fulfilled' && containerRes.value?.logs) {
+         logs.push(...containerRes.value.logs);
+      } else if (containerRes.status === 'rejected') {
+         encounteredError = containerRes.reason;
+      }
+      if (validatorRes.status === 'fulfilled' && validatorRes.value?.logs) {
+         logs.push(...validatorRes.value.logs);
+      } else if (validatorRes.status === 'rejected') {
+         encounteredError = validatorRes.reason;
+      }
+      if (logs.length === 0 && encounteredError) {
+         throw encounteredError;
+      }
+      setLogsResource({ data: { logs }, error: '', loading: false, refreshing: false })
+    } catch (error) {
+      setLogsResource((current) => ({
+        ...current,
+        error: error instanceof Error ? error.message : 'Unable to load logs',
+        loading: false,
+        refreshing: false,
+      }))
+    }
+  }
+
 async function loadEvaluations() {
+
     const path =
       evaluationFilter === 'all'
         ? '/api/evaluations'
